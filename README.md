@@ -22,10 +22,14 @@ npx http-server -p 8080 .
 
 ## 기술
 
-- QR 엔진: [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (CDN)
-- 폰트: JetBrains Mono + Gowun Dodum (Google Fonts)
+- QR 엔진: [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 by Kazuhiko Arase (MIT)
+- 폰트: [JetBrains Mono](https://www.jetbrains.com/lp/mono/) + [Gowun Dodum](https://fonts.google.com/specimen/Gowun+Dodum) (Google Fonts, OFL)
 - 테마: 앰버 CRT 터미널
+
+## 후원하기
+
+도구가 도움이 됐다면 ☕ [paypal.me/codingnow](https://paypal.me/codingnow)
 
 ## 라이선스
 
-CODINGNOW
+[MIT](./LICENSE) © CODINGNOW
