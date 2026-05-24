@@ -26,6 +26,10 @@ npx http-server -p 8080 .
 - 폰트: JetBrains Mono + Gowun Dodum (Google Fonts)
 - 테마: 앰버 CRT 터미널
 
+## 후원하기
+
+도구가 도움이 됐다면 ☕ [paypal.me/codingnow](https://paypal.me/codingnow)
+
 ## 라이선스
 
 CODINGNOW
