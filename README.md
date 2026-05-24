@@ -2,6 +2,8 @@
 
 텍스트·URL을 QR 코드로 즉시 변환하고 PNG·SVG로 다운로드하는 **단일 HTML** 도구.
 
+🎬 **데모:** [docs/demo.html](./docs/demo.html) — 약 21초 자동 재생 시연 (자막 동기, [WebVTT](./docs/demo.vtt))
+
 ## 특징
 
 - 실시간 미리보기 — 입력 즉시 QR 갱신, "생성" 버튼 없음
