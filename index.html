@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR 코드 생성기 - 무료 온라인 QR 만들기 | CODINGNOW</title>
+<meta name="description" content="텍스트·URL을 QR 코드로 즉시 변환하고 PNG·SVG로 다운로드. 무료, 설치 불필요.">
+<meta property="og:title" content="QR 코드 생성기 | CODINGNOW">
+<meta property="og:description" content="텍스트·URL을 QR 코드로 즉시 변환. PNG·SVG 다운로드. 무료.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<!-- QR 엔진: 격자(모듈) 데이터를 계산 → PNG(canvas)와 SVG 양쪽에 사용 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0a08; --panel:#141210; --panel-2:#1c1916;
+    --amber:#ffb000; --amber-dim:#b8801f; --amber-glow:rgba(255,176,0,.35);
+    --green:#5ddc7a; --red:#e0876a; --line:#2a251e; --muted:#7a6f5c; --text:#f3e7cf;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(ellipse 120% 80% at 50% -10%, rgba(255,176,0,.06), transparent 60%), var(--bg);
+    color:var(--text); font-family:'JetBrains Mono',monospace;
+    min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+    padding:clamp(16px,4vw,40px); position:relative; overflow-x:hidden;
+  }
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 2px,rgba(0,0,0,.18) 3px,rgba(0,0,0,0) 4px);mix-blend-mode:multiply;z-index:99}
+
+  .wrap{width:100%;max-width:760px;position:relative;z-index:1}
+  header{margin-bottom:24px}
+  .badge{display:inline-block;font-size:11px;letter-spacing:.18em;color:var(--amber-dim);border:1px solid var(--line);padding:4px 10px;border-radius:2px;margin-bottom:14px;text-transform:uppercase}
+  h1{font-size:clamp(24px,5.5vw,36px);font-weight:800;line-height:1.05;color:var(--amber);text-shadow:0 0 18px var(--amber-glow);letter-spacing:-.01em}
+  h1 .cursor{display:inline-block;width:.55ch;height:1em;background:var(--amber);margin-left:.1em;transform:translateY(.12em);animation:blink 1.05s steps(1) infinite;box-shadow:0 0 14px var(--amber-glow)}
+  @keyframes blink{50%{opacity:0}}
+  .sub{margin-top:12px;color:var(--muted);font-size:14px;line-height:1.6}
+  .sub b{color:var(--text);font-weight:500}
+
+  .container{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;margin-top:20px}
+  @media(max-width:660px){.container{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}
+  .label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber-dim);margin-bottom:12px;display:block}
+
+  textarea{width:100%;min-height:130px;resize:vertical;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:14px;color:var(--text);font-family:'Gowun Dodum',sans-serif;font-size:15px;line-height:1.7;outline:none;caret-color:var(--amber)}
+  textarea:focus{border-color:var(--amber-dim);box-shadow:0 0 0 3px rgba(255,176,0,.08)}
+  textarea::placeholder{color:#5c5345}
+
+  .ctrl{margin-top:16px}
+  .ctrl label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber-dim);display:block;margin-bottom:8px}
+  select{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-family:inherit;font-size:13px;padding:10px 12px;border-radius:6px;outline:none;cursor:pointer}
+  select:focus{border-color:var(--amber-dim)}
+
+  .color-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .color-field{display:flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+  .color-field input[type=color]{width:28px;height:28px;border:none;background:none;cursor:pointer;padding:0}
+  .color-field span{font-size:11px;color:var(--muted)}
+
+  .qr-container{display:flex;justify-content:center;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;min-height:300px;padding:20px;position:relative}
+  .qr-container.empty{background:var(--panel-2)}
+  .qr-container.empty::after{content:"QR 코드 생성 대기";position:absolute;color:var(--muted);font-size:13px;opacity:.6}
+  #qr svg{display:block;max-width:100%;height:auto}
+
+  .btns{display:flex;gap:10px;margin-top:16px}
+  .btn{flex:1;font-family:inherit;font-size:13px;letter-spacing:.04em;padding:12px 16px;border-radius:7px;cursor:pointer;transition:all .15s;border:1px solid var(--line);background:transparent;color:var(--text)}
+  .btn:hover{border-color:var(--amber-dim);color:var(--amber)}
+  .btn.down{background:var(--amber);color:#1a1304;border-color:var(--amber);font-weight:700}
+  .btn.down:hover{box-shadow:0 0 22px var(--amber-glow)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn:disabled:hover{box-shadow:none;border-color:var(--line);color:var(--text)}
+
+  .info{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6}
+  .info b{color:var(--text);font-weight:500}
+  .fmt-note{display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--muted)}
+  .fmt-note span b{color:var(--amber-dim)}
+
+  footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:12px;position:relative;z-index:1}
+  footer a{color:var(--amber-dim);text-decoration:none;border-bottom:1px dotted var(--amber-dim)}
+  footer a:hover{color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">Text &rarr; QR &middot; PNG &amp; SVG</span>
+    <h1>QR 생성기<span class="cursor"></span></h1>
+    <p class="sub">텍스트나 URL을 입력하면 <b>실시간</b>으로 QR이 생성됩니다. <b>PNG</b>(이미지)와 <b>SVG</b>(벡터) 둘 다 다운로드할 수 있어요.</p>
+  </header>
+
+  <div class="container">
+    <div class="panel">
+      <label class="label">텍스트 / URL</label>
+      <textarea id="input" placeholder="여기에 입력하세요…" spellcheck="false"></textarea>
+
+      <div class="ctrl">
+        <label>에러 정정</label>
+        <select id="level">
+          <option value="L">L (7% 복구)</option>
+          <option value="M" selected>M (15% 복구)</option>
+          <option value="Q">Q (25% 복구)</option>
+          <option value="H">H (30% 복구)</option>
+        </select>
+      </div>
+
+      <div class="ctrl">
+        <label>색상</label>
+        <div class="color-row">
+          <div class="color-field">
+            <input type="color" id="fg" value="#000000">
+            <span>전경</span>
+          </div>
+          <div class="color-field">
+            <input type="color" id="bg" value="#ffffff">
+            <span>배경</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info">
+        💡 <b>에러 정정</b>이 높을수록 QR이 손상돼도 읽힙니다. 로고를 덮을 계획이면 H를 쓰세요.
+      </div>
+    </div>
+
+    <div>
+      <div class="qr-container empty" id="qr-container">
+        <div id="qr"></div>
+      </div>
+
+      <div class="btns">
+        <button class="btn down" id="dl-png" disabled>💾 PNG</button>
+        <button class="btn down" id="dl-svg" disabled>💾 SVG</button>
+      </div>
+
+      <div class="fmt-note">
+        <span><b>PNG</b> — 화면·앱·SNS용 이미지</span>
+        <span><b>SVG</b> — 인쇄·확대용 벡터</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>CODINGNOW · QR Generator</span>
+    <a href="#" id="donate">☕ 후원하기</a>
+  </footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+// 후원 링크는 여기에 본인 주소를 넣으세요 (예: https://paypal.me/codingnow)
+const DONATE_URL = "";
+
+let qrData = null;
+
+function levelMap(l){ return ({L:'L',M:'M',Q:'Q',H:'H'})[l] || 'M'; }
+
+function generate(){
+  const text = $('input').value.trim();
+  const level = $('level').value;
+  const fg = $('fg').value, bg = $('bg').value;
+
+  $('qr-container').classList.toggle('empty', !text);
+  $('dl-png').disabled = !text;
+  $('dl-svg').disabled = !text;
+  $('qr').innerHTML = '';
+
+  if(!text){ qrData = null; return; }
+
+  try{
+    const qr = qrcode(0, levelMap(level));  // typeNumber 0 = 자동
+    qr.addData(text);
+    qr.make();
+    qrData = qr;
+    $('qr').innerHTML = buildSVG(qr, fg, bg, 320);
+  }catch(e){
+    $('qr').innerHTML = '<span style="color:#e0876a;font-size:13px">오류: '+e.message+'</span>';
+    qrData = null;
+  }
+}
+
+/* QR 모듈 데이터 → SVG 문자열 */
+function buildSVG(qr, fg, bg, pxSize){
+  const count = qr.getModuleCount(), margin = 4, total = count + margin*2;
+  let rects = '';
+  for(let r=0;r<count;r++) for(let c=0;c<count;c++)
+    if(qr.isDark(r,c)) rects += '<rect x="'+(c+margin)+'" y="'+(r+margin)+'" width="1" height="1"/>';
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="'+pxSize+'" height="'+pxSize+'" viewBox="0 0 '+total+' '+total+'" shape-rendering="crispEdges">'
+       + '<rect width="'+total+'" height="'+total+'" fill="'+bg+'"/>'
+       + '<g fill="'+fg+'">'+rects+'</g></svg>';
+}
+
+/* QR 모듈 데이터 → 캔버스 (PNG용) */
+function buildCanvas(qr, fg, bg, cell){
+  const count = qr.getModuleCount(), margin = 4, total = count + margin*2;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = total * cell;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = fg;
+  for(let r=0;r<count;r++) for(let c=0;c<count;c++)
+    if(qr.isDark(r,c)) ctx.fillRect((c+margin)*cell,(r+margin)*cell,cell,cell);
+  return canvas;
+}
+
+function downloadPNG(){
+  if(!qrData) return;
+  const canvas = buildCanvas(qrData, $('fg').value, $('bg').value, 16); // 고해상도
+  const link = document.createElement('a');
+  link.href = canvas.toDataURL('image/png');
+  link.download = 'qrcode.png';
+  link.click();
+}
+
+function downloadSVG(){
+  if(!qrData) return;
+  const svg = buildSVG(qrData, $('fg').value, $('bg').value, 1024);
+  const blob = new Blob([svg], {type:'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = 'qrcode.svg'; link.click();
+  URL.revokeObjectURL(url);
+}
+
+$('input').addEventListener('input', generate);
+$('level').addEventListener('change', generate);
+$('fg').addEventListener('input', generate);
+$('bg').addEventListener('input', generate);
+$('dl-png').addEventListener('click', downloadPNG);
+$('dl-svg').addEventListener('click', downloadSVG);
+if(DONATE_URL){ $('donate').href = DONATE_URL; }
+
+generate();
+</script>
+</body>
+</html>
