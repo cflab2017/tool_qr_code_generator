@@ -1,3 +1,7 @@
+깃허브 웹페이지 : https://cflab2017.github.io/tool_qr_code_generator/
+홈페이지 링크 : https://www.coding-now.com/qrcode
+
+
 # QR 코드 생성기
 
 텍스트·URL을 QR 코드로 즉시 변환하고 PNG·SVG로 다운로드하는 **단일 HTML** 도구.
