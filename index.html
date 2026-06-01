@@ -13,6 +13,46 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <!-- QR 엔진: 격자(모듈) 데이터를 계산 → PNG(canvas)와 SVG 양쪽에 사용 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<!-- SEO: 구조화 데이터 (검색 결과에서 풍부한 스니펫 노출) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "QR 코드 생성기 (CODINGNOW)",
+  "description": "텍스트·URL·WiFi·vCard를 QR 코드로 즉시 변환하고 PNG·SVG로 다운로드. 중앙 로고 삽입과 색상 커스터마이즈 지원. 무료, 설치·회원가입 불필요, 데이터는 서버로 업로드되지 않음.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any (web browser)",
+  "browserRequirements": "Requires JavaScript. Supports modern browsers.",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"},
+  "inLanguage": "ko",
+  "featureList": [
+    "텍스트 / URL → QR",
+    "WiFi 접속 QR (SSID·암호·암호화 방식)",
+    "vCard 명함 QR (이름·전화·이메일·회사 등)",
+    "중앙 로고 임베드 (PNG·JPG·SVG)",
+    "전경·배경 색상 커스터마이즈",
+    "에러 정정 레벨 선택 (L/M/Q/H)",
+    "PNG 고해상도 다운로드",
+    "SVG 벡터 다운로드"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"입력한 데이터가 서버로 전송되나요?","acceptedAnswer":{"@type":"Answer","text":"아니요. 모든 변환이 브라우저 내부에서 끝납니다. 입력한 텍스트·WiFi 비밀번호·로고 이미지 어떤 것도 서버로 업로드되지 않습니다. 페이지를 닫는 순간 모두 사라집니다."}},
+    {"@type":"Question","name":"만든 QR 코드를 상업적으로 사용해도 되나요?","acceptedAnswer":{"@type":"Answer","text":"네. 도구로 만든 QR 코드는 자유롭게 상업적으로 쓸 수 있습니다. 다만 로고로 사용한 이미지의 저작권은 별도이므로 직접 만들었거나 권리를 보유한 이미지를 쓰세요."}},
+    {"@type":"Question","name":"QR 코드는 영구적인가요?","acceptedAnswer":{"@type":"Answer","text":"네. 이 도구는 정적(static) QR을 만듭니다. 내용이 QR 자체에 직접 새겨지므로, 한 번 만들어둔 QR은 영원히 그대로 동작합니다."}},
+    {"@type":"Question","name":"만들 수 있는 QR 코드 개수에 제한이 있나요?","acceptedAnswer":{"@type":"Answer","text":"없습니다. 무료이며, 회원가입도, 일일 생성 한도도 없습니다."}},
+    {"@type":"Question","name":"로고를 넣으면 스캔이 안 될 수도 있나요?","acceptedAnswer":{"@type":"Answer","text":"로고가 너무 크면 스캔에 영향이 있을 수 있습니다. 도구는 자동으로 H 레벨(30% 복구)로 올려 여유를 확보하지만, 로고 비율은 20% 이하를 권장하며 인쇄 전 반드시 휴대폰으로 직접 스캔 테스트를 해보세요."}},
+    {"@type":"Question","name":"WiFi QR을 스캔하면 자동 접속되나요?","acceptedAnswer":{"@type":"Answer","text":"iOS 카메라와 Android 기본 카메라(또는 Google 렌즈) 모두에서 스캔 즉시 '네트워크에 연결' 알림이 뜨고, 한 번 탭하면 접속됩니다. 보안상 사용자 확인이 한 번 필요합니다."}},
+    {"@type":"Question","name":"vCard QR로 저장한 연락처는 어디로 가나요?","acceptedAnswer":{"@type":"Answer","text":"휴대폰의 기본 연락처 앱에 저장됩니다. 스캔 후 '연락처에 추가' 옵션이 뜨고, 탭하면 이름·전화·이메일 등 모든 필드가 채워진 새 연락처가 만들어집니다."}},
+    {"@type":"Question","name":"한글 SSID나 한글 이름도 되나요?","acceptedAnswer":{"@type":"Answer","text":"네. 모든 입력 필드가 UTF-8을 지원해 한글·이모지·일본어 모두 정상 작동합니다."}}
+  ]
+}
+</script>
 <style>
   :root{
     --bg:#0b0a08; --panel:#141210; --panel-2:#1c1916;
@@ -118,6 +158,42 @@
   footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:12px;position:relative;z-index:1}
   footer a{color:var(--amber-dim);text-decoration:none;border-bottom:1px dotted var(--amber-dim)}
   footer a:hover{color:var(--amber)}
+
+  /* 하단 콘텐츠 (기능 설명 / FAQ / SEO) */
+  .content{margin-top:48px;padding-top:32px;border-top:1px dashed var(--line)}
+  .content > section{margin-bottom:40px}
+  .content h2{font-size:15px;font-weight:700;color:var(--amber);letter-spacing:.1em;margin:0 0 18px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+  .content h2::before{content:"▸ ";color:var(--amber-dim);margin-right:4px}
+  .content p.lead{font-size:13px;line-height:1.8;color:var(--muted);margin:-8px 0 18px;font-family:'Gowun Dodum',sans-serif}
+
+  .use-cases{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:0;margin:0}
+  .use-cases li{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.6;color:var(--muted);font-family:'Gowun Dodum',sans-serif}
+  .use-cases li b{display:block;color:var(--text);font-weight:700;font-size:13px;margin-bottom:4px;letter-spacing:.02em;font-family:'JetBrains Mono',monospace}
+  .use-cases li .em{color:var(--amber-dim);margin-right:6px}
+
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .feature-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px}
+  .feature-card h3{font-size:13px;color:var(--text);font-weight:700;margin:0 0 10px;letter-spacing:.04em;font-family:'JetBrains Mono',monospace;text-transform:uppercase}
+  .feature-card h3 .ic{display:inline-block;color:var(--amber);margin-right:6px}
+  .feature-card p{font-size:13px;line-height:1.75;color:var(--muted);margin:0;font-family:'Gowun Dodum',sans-serif}
+  .feature-card p + p{margin-top:8px}
+  .feature-card p b{color:var(--text);font-weight:600}
+  .feature-card code{background:var(--panel-2);border:1px solid var(--line);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber-dim)}
+  .feature-card ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.85;font-family:'Gowun Dodum',sans-serif}
+  .feature-card ul li b{color:var(--amber-dim);font-weight:700;font-family:'JetBrains Mono',monospace}
+
+  .faq details{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:10px;overflow:hidden}
+  .faq summary{padding:14px 16px;cursor:pointer;font-size:13px;color:var(--text);font-weight:600;list-style:none;display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;transition:color .15s}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::before{content:"+";color:var(--amber);font-weight:800;font-size:16px;width:1em;flex-shrink:0}
+  .faq details[open] summary::before{content:"−"}
+  .faq details[open] summary{color:var(--amber);border-bottom:1px solid var(--line)}
+  .faq summary:hover{color:var(--amber)}
+  .faq .ans{padding:14px 16px 14px 38px;font-size:13px;line-height:1.8;color:var(--muted);font-family:'Gowun Dodum',sans-serif}
+  .faq .ans b{color:var(--text);font-weight:600}
+
+  .keywords{font-size:12px;line-height:2;color:var(--muted);font-family:'Gowun Dodum',sans-serif;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+  .keywords b{color:var(--text);font-weight:600}
 </style>
 </head>
 <body>
@@ -227,6 +303,136 @@
         <span><b>SVG</b> — 인쇄·확대용 벡터</span>
       </div>
     </div>
+  </div>
+
+  <div class="content">
+
+    <section aria-labelledby="usecases-h">
+      <h2 id="usecases-h">이렇게 쓰세요</h2>
+      <p class="lead">QR 코드는 종이와 화면, 사물과 디지털을 잇는 가장 빠른 방법입니다. 흔히 쓰이는 상황을 모아봤어요.</p>
+      <ul class="use-cases">
+        <li><b><span class="em">🏪</span>카페·식당·매장</b>와이파이 비밀번호 안내, 메뉴판, 주문 페이지, 리뷰 유도 링크.</li>
+        <li><b><span class="em">💼</span>명함·이력서</b>vCard QR 한 번으로 연락처가 통째로 저장됩니다.</li>
+        <li><b><span class="em">📋</span>전단·포스터·간판</b>스캔 한 번으로 홈페이지·예약 페이지로 즉시 이동.</li>
+        <li><b><span class="em">🎟️</span>행사·전시·세미나</b>입장권, 체크인, 자료 다운로드, 설문 링크.</li>
+        <li><b><span class="em">📦</span>제품 패키지·매뉴얼</b>사용법 동영상·고객지원 페이지로 연결.</li>
+        <li><b><span class="em">🎨</span>브랜드·디자인</b>중앙 로고 + 브랜드 컬러로 정체성을 살린 QR.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="features-h">
+      <h2 id="features-h">기능 자세히</h2>
+      <p class="lead">한 도구 안에서 4가지 종류의 QR을 만들 수 있고, 모든 QR에 로고와 색상을 입힐 수 있습니다.</p>
+      <div class="feature-grid">
+
+        <article class="feature-card">
+          <h3><span class="ic">📝</span>텍스트 / URL QR</h3>
+          <p>가장 일반적인 형태. 입력한 텍스트나 URL을 그대로 인코딩합니다. URL은 카메라로 스캔 즉시 브라우저가 열리고, 일반 텍스트는 메모로 표시됩니다. 한글·이모지·일본어 등 <b>UTF-8 전 문자</b>를 지원합니다.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3><span class="ic">📡</span>WiFi 접속 QR</h3>
+          <p>표준 <code>WIFI:T:WPA;S:이름;P:비밀번호;;</code> 포맷으로 인코딩되어, <b>iPhone 카메라와 갤럭시 카메라 모두에서 스캔 즉시 "네트워크에 연결" 안내</b>가 뜹니다.</p>
+          <p>SSID에 한글·공백, 비밀번호에 특수문자(<code>;</code>, <code>,</code>, <code>:</code>)가 있어도 자동 이스케이프됩니다. 카페·매장·사무실에서 손님이 매번 비밀번호를 묻지 않아도 됩니다.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3><span class="ic">👤</span>vCard 명함 QR</h3>
+          <p>vCard 3.0 표준. 스캔 한 번으로 <b>이름·전화·이메일·회사·직책·웹사이트가 한꺼번에 연락처로 저장</b>됩니다. 종이 명함의 디지털 동반자로 적합합니다. iOS·Android 기본 카메라 모두 호환.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3><span class="ic">🖼️</span>중앙 로고 임베드</h3>
+          <p>QR 가운데에 회사 로고나 캐릭터 이미지를 넣어 브랜드 식별성을 높입니다. 로고가 들어가면 자동으로 <b>에러 정정을 H(30% 복구)로 잠가</b> 중앙이 가려져도 스캔에 지장이 없도록 보호합니다.</p>
+          <p>PNG·JPG·SVG 입력을 지원하며, <b>SVG로 다운로드 받아도 로고가 함께 base64로 임베드</b>되어 파일 하나에 완결됩니다.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3><span class="ic">🎨</span>색상 커스터마이즈</h3>
+          <p>브랜드 색에 맞춰 전경(어두운 모듈)과 배경 색을 자유롭게 바꾸세요. 단, <b>콘트라스트가 너무 낮으면 카메라가 인식하지 못합니다.</b> 보통 전경은 어둡게, 배경은 밝게 두는 게 안전합니다.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3><span class="ic">💾</span>PNG vs SVG</h3>
+          <ul>
+            <li><b>PNG</b> — 모듈당 16px 고해상도 래스터. 화면·모바일 앱·SNS 공유용.</li>
+            <li><b>SVG</b> — 진짜 벡터. 명함·포스터·머그컵 등 인쇄·확대해도 안 깨짐.</li>
+          </ul>
+        </article>
+
+        <article class="feature-card">
+          <h3><span class="ic">🛡️</span>에러 정정 레벨</h3>
+          <p>QR이 부분적으로 손상되거나 가려져도 읽힐 수 있도록 들어가는 여분 데이터.</p>
+          <ul>
+            <li><b>L (7%)</b> — 짧은 데이터, 디지털 화면 위주</li>
+            <li><b>M (15%)</b> — 기본값. 일반 인쇄·화면 둘 다 무난</li>
+            <li><b>Q (25%)</b> — 옥외·포장지·스티커</li>
+            <li><b>H (30%)</b> — 로고 삽입 시 자동, 또는 험한 환경</li>
+          </ul>
+        </article>
+
+        <article class="feature-card">
+          <h3><span class="ic">🔒</span>프라이버시</h3>
+          <p>모든 변환이 <b>브라우저 안에서 끝납니다.</b> 입력한 텍스트, WiFi 비밀번호, 로고 이미지 어느 것도 서버로 업로드되지 않으며, 페이지를 닫으면 흔적 없이 사라집니다.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <section aria-labelledby="faq-h">
+      <h2 id="faq-h">자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>입력한 데이터가 서버로 전송되나요?</summary>
+          <div class="ans">아니요. <b>모든 변환이 브라우저 내부에서 끝납니다.</b> 입력한 텍스트·WiFi 비밀번호·로고 이미지 어떤 것도 서버로 업로드되지 않습니다. 페이지를 닫는 순간 모두 사라지므로 프라이버시 걱정 없이 쓸 수 있습니다.</div>
+        </details>
+        <details>
+          <summary>만든 QR 코드를 상업적으로 사용해도 되나요?</summary>
+          <div class="ans">네. 도구로 만든 QR 코드는 자유롭게 상업적으로 쓸 수 있습니다. 다만 <b>로고로 사용한 이미지의 저작권은 별도</b>이므로 직접 만들었거나 권리를 보유한 이미지를 쓰세요.</div>
+        </details>
+        <details>
+          <summary>QR 코드는 영구적인가요? 나중에 내용을 바꿀 수 있나요?</summary>
+          <div class="ans">네, 이 도구는 <b>정적(static) QR</b>을 만듭니다. 내용이 QR 자체에 직접 새겨지므로 한 번 만든 QR은 영원히 그대로 동작합니다. 단점은 인쇄한 QR의 내용을 나중에 바꿀 수 없다는 점입니다. 내용을 바꾸고 싶다면 단축 URL 서비스(짧은 링크)를 가운데 끼워 우회할 수 있습니다.</div>
+        </details>
+        <details>
+          <summary>만들 수 있는 QR 개수에 제한이 있나요?</summary>
+          <div class="ans">없습니다. 무료이며, 회원가입도, 일일 생성 한도 같은 것도 없습니다.</div>
+        </details>
+        <details>
+          <summary>로고를 넣으면 스캔이 안 될 수도 있나요?</summary>
+          <div class="ans">로고가 너무 크면 스캔에 영향이 있을 수 있습니다. 도구는 자동으로 <b>H 레벨(30% 복구)</b>로 올려 여유를 확보하지만, 로고 비율은 <b>20% 이하</b>를 권장하며 인쇄 전 반드시 휴대폰으로 직접 스캔 테스트를 해보세요.</div>
+        </details>
+        <details>
+          <summary>WiFi QR을 스캔하면 자동으로 접속되나요?</summary>
+          <div class="ans">iOS 카메라와 Android 기본 카메라(또는 Google 렌즈) 모두에서 스캔 즉시 "네트워크에 연결" 알림이 뜨고, 한 번 탭하면 접속됩니다. 보안상 사용자 확인이 한 번 필요합니다.</div>
+        </details>
+        <details>
+          <summary>vCard QR로 저장한 연락처는 어디로 가나요?</summary>
+          <div class="ans">휴대폰의 <b>기본 연락처 앱</b>에 저장됩니다. 스캔 후 "연락처에 추가" 옵션이 뜨고, 탭하면 이름·전화·이메일 등 모든 필드가 채워진 새 연락처가 만들어집니다.</div>
+        </details>
+        <details>
+          <summary>한글 SSID·한글 이름도 되나요?</summary>
+          <div class="ans">네. 모든 입력 필드가 UTF-8을 지원해 한글·이모지·일본어가 모두 정상 작동합니다.</div>
+        </details>
+        <details>
+          <summary>PNG와 SVG 중 어느 걸 받아야 하나요?</summary>
+          <div class="ans">화면·앱·SNS에 공유할 거라면 <b>PNG</b>가 편합니다. 명함·포스터·옷·머그컵처럼 인쇄하거나 크게 확대할 거라면 <b>SVG</b>를 받으세요. 벡터라 아무리 확대해도 깨지지 않습니다.</div>
+        </details>
+      </div>
+    </section>
+
+    <section aria-labelledby="kw-h">
+      <h2 id="kw-h">이 도구가 도와주는 검색</h2>
+      <p class="keywords">
+        <b>QR 코드 만들기</b> · <b>무료 QR 생성기</b> · QR 코드 생성 · QR 코드 다운로드 · QR 코드 PNG · QR 코드 SVG ·
+        <b>와이파이 QR 만들기</b> · WiFi QR 코드 · 카페 와이파이 QR · 매장 WiFi QR ·
+        <b>명함 QR 만들기</b> · vCard QR · 연락처 QR ·
+        <b>로고 QR 코드</b> · 로고 박힌 QR · 디자인 QR · 컬러 QR · 브랜드 QR ·
+        URL QR · 링크 QR · 텍스트 QR · 한글 QR · 이모지 QR ·
+        QR 코드 인쇄용 벡터 · 고해상도 QR · 무설치 QR 생성기 · 회원가입 없는 QR · 온라인 QR 도구
+      </p>
+    </section>
+
   </div>
 
   <footer>
